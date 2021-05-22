@@ -1,6 +1,8 @@
 {
   "exclude": ["node_modules"],
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "Node",
     "module": "ESNext",
     "target": "ES2017",
     "strict": true,

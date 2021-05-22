@@ -4,7 +4,8 @@
   "description": "An image handler for devlog that runs on AWS Lambda.",
   "main": "dist/main.js",
   "scripts": {
-    "build": "rimraf ./dist && cross-env NODE_ENV=production rollup -c && TS_NODE_PROJECT=tsconfig.build.json ts-node util/build.ts"
+    "build": "rimraf ./dist && cross-env NODE_ENV=production rollup -c && cross-env TS_NODE_PROJECT=tsconfig.build.json ts-node util/build.ts",
+    "deploy": "rimraf ./dist && cross-env NODE_ENV=production rollup -c && cross-env TS_NODE_PROJECT=tsconfig.build.json ts-node util/build.ts && serverless deploy"
   },
   "repository": {
     "type": "git",
@@ -40,6 +41,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.16.0",
+    "blurhash": "^1.1.3",
     "sharp": "^0.28.2"
   }
 }

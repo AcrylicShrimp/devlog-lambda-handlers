@@ -1,2 +1,4 @@
-node_modules/
+.serverless/
 dist/
+node_modules/
+serverless.yml
