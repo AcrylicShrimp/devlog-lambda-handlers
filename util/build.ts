@@ -12,7 +12,7 @@ if (pkg.dependencies) for (const dep in pkg.dependencies) deps.push(`${dep}@${pk
 fs.mkdirSync(path.join(intPath), { recursive: true });
 fs.renameSync(path.join('dist', 'index.js'), path.join(intPath, 'index.js'));
 if (deps.length)
-  spawnSync('npm', ['install', '--prefix', path.join(process.cwd(), intPath), ...deps], {
+  spawnSync('npm.cmd', ['install', '--prefix', path.join(process.cwd(), intPath), ...deps], {
     cwd: path.join(process.cwd(), intPath),
     env: {
       ...process.env,
@@ -21,7 +21,24 @@ if (deps.length)
       npm_config_target: '14.0.0',
     },
   });
-spawnSync('zip', ['-r', 'artifacts.zip', 'index.js', ...(deps.length ? ['node_modules'] : [])], {
-  cwd: path.join(process.cwd(), intPath),
-});
+if (process.platform === 'win32')
+  spawnSync(
+    'powershell',
+    [
+      'Compress-Archive',
+      '-Path',
+      ['index.js', ...(deps.length ? ['node_modules'] : [])].join(', '),
+      '-DestinationPath',
+      'artifacts.zip',
+      '-CompressionLevel',
+      'NoCompression',
+    ],
+    {
+      cwd: path.join(process.cwd(), intPath),
+    },
+  );
+else
+  spawnSync('zip', ['-r', 'artifacts.zip', 'index.js', ...(deps.length ? ['node_modules'] : [])], {
+    cwd: path.join(process.cwd(), intPath),
+  });
 fs.renameSync(path.join(intPath, 'artifacts.zip'), path.join('dist', 'artifacts.zip'));
