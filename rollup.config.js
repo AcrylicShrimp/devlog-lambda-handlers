@@ -1,7 +1,3 @@
-import commonjs from '@rollup/plugin-commonjs';
-import nativePlugin from 'rollup-plugin-natives';
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import json from '@rollup/plugin-json';
 import { terser } from 'rollup-plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 
@@ -10,17 +6,7 @@ export default {
   output: {
     file: 'dist/index.js',
     format: 'cjs',
-    sourcemap: false,
+    sourcemap: true,
   },
-  plugins: [
-    nativePlugin({
-      copyTo: 'dist/libs',
-      sourcemap: false,
-    }),
-    nodeResolve({ preferBuiltins: false }),
-    commonjs({ include: ['src/index.ts', 'node_modules/**'] }),
-    json(),
-    typescript(),
-    terser(),
-  ],
+  plugins: [typescript(), terser()],
 };
