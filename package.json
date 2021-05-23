@@ -1,7 +1,7 @@
 {
-  "name": "devlog-image-handler",
+  "name": "devlog-lambda-handlers",
   "version": "1.0.0",
-  "description": "An image handler for devlog that runs on AWS Lambda.",
+  "description": "Serverless functions for the devlog that runs on AWS Lambda.",
   "main": "dist/main.js",
   "scripts": {
     "build": "rimraf ./dist && cross-env NODE_ENV=production rollup -c && cross-env TS_NODE_PROJECT=tsconfig.build.json ts-node util/build.ts",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AcrylicShrimp/devlog-image-handler.git"
+    "url": "git+https://github.com/AcrylicShrimp/devlog-lambda-handlers.git"
   },
   "keywords": [
     "devlog"
@@ -18,9 +18,9 @@
   "author": "AcrylicShrimp",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/AcrylicShrimp/devlog-image-handler/issues"
+    "url": "https://github.com/AcrylicShrimp/devlog-lambda-handlers/issues"
   },
-  "homepage": "https://github.com/AcrylicShrimp/devlog-image-handler#readme",
+  "homepage": "https://github.com/AcrylicShrimp/devlog-lambda-handlers#readme",
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.2.1",
     "@types/aws-lambda": "^8.10.76",
