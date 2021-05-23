@@ -4,7 +4,7 @@ This repository contains lambda functions used by the [devlog](https://github.co
 
 ### Image destination generator
 
-This function generates a presigned S3 post url that allows upload images directly from the front-end.
+This function generates a presigned S3 post url that allows uploading images directly from the front-end.
 
 ### Image handler
 
