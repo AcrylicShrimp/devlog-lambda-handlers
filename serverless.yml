@@ -1,0 +1,52 @@
+service: devlogHandlers
+
+package:
+  artifact: dist/artifacts.zip
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: production
+  region: ap-northeast-2
+  versionFunctions: false
+  apiGateway:
+    disableDefaultEndpoint: true
+
+functions:
+  imageDestinationGenerator:
+    handler: index.imageDestinationGenerator
+    name: devlog-imageDestinationGenerator
+    description: Image destination generator
+    memorySize: 1024
+    timeout: 5
+    events:
+      - http:
+          path: images/destinations
+          method: post
+    environment:
+      AWS_S3_REGION: ${env:AWS_S3_REGION}
+      AWS_S3_BUCKET: ${env:AWS_S3_BUCKET}
+  imageUploaded:
+    handler: index.imageHandler
+    name: devlog-imageHandler
+    description: Image handler
+    memorySize: 2048
+    timeout: 10
+    events:
+      - http:
+          path: images/processing-requests
+          method: post
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  customDomain:
+    domainName: ${env:DOMAIN}
+    basePath: 'v1'
+    createRoute53Record: false
+
+useDotenv: true
+
+configValidationMode: error
+unresolvedVariablesNotificationMode: error
