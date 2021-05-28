@@ -5,6 +5,24 @@ import { randomBytes } from 'crypto';
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   try {
+    if ((event.headers['content-type'] ?? '') !== 'text/plain')
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          message: 'body should be non-empty text/plain',
+        }),
+      };
+
+    const title = event.body?.trim();
+
+    if (!title)
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          message: 'body should be non-empty text/plain',
+        }),
+      };
+
     const token = await new Promise<string>((resolve, reject) =>
       randomBytes(32, (err, buf) => (err ? reject(err) : resolve(buf.toString('hex')))),
     );
@@ -13,9 +31,14 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     });
     const result = await createPresignedPost(s3, {
       Bucket: process.env.AWS_S3_BUCKET!,
-      Key: `v1/unsaved/images/${token}`,
+      Key: `${process.env.S3_BUCKET_KEY_PREFIX_IMAGE!}${token}`,
+      Conditions: [
+        {
+          'x-amz-meta-title': title,
+        },
+      ],
       Fields: {
-        'x-amz-meta-title': event.body ?? '',
+        'x-amz-meta-title': title,
       },
     });
 

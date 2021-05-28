@@ -26,16 +26,31 @@ functions:
     environment:
       AWS_S3_REGION: ${env:AWS_S3_REGION}
       AWS_S3_BUCKET: ${env:AWS_S3_BUCKET}
-  imageUploaded:
+      S3_BUCKET_KEY_PREFIX_IMAGE: ${env:S3_BUCKET_KEY_PREFIX_IMAGE}
+  imageEventHander:
+    handler: index.imageEventHander
+    name: devlog-imageEventHander
+    description: Image event handler
+    memorySize: 1024
+    timeout: 20
+    events:
+      - s3:
+          existing: true
+          bucket: ${env:AWS_S3_BUCKET}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: ${env:S3_BUCKET_KEY_PREFIX_IMAGE}
+    environment:
+      AWS_LAMBDA_REGION: ${env:AWS_LAMBDA_REGION}
+      IMAGE_HANDLER_NAME: ${env:IMAGE_HANDLER_NAME}
+  imageHander:
     handler: index.imageHandler
     name: devlog-imageHandler
     description: Image handler
     memorySize: 2048
     timeout: 10
-    events:
-      - http:
-          path: images/processing-requests
-          method: post
+    environment:
+      CALLBACK_DOMAIN: ${env:CALLBACK_DOMAIN}
 
 plugins:
   - serverless-domain-manager
