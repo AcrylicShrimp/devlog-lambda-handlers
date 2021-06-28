@@ -26,7 +26,9 @@ functions:
     environment:
       AWS_S3_REGION: ${env:AWS_S3_REGION}
       AWS_S3_BUCKET: ${env:AWS_S3_BUCKET}
-      S3_BUCKET_KEY_PREFIX_IMAGE: ${env:S3_BUCKET_KEY_PREFIX_IMAGE}
+      S3_BUCKET_KEY_PREFIX: ${env:S3_BUCKET_KEY_PREFIX}
+      BACKEND_IMAGE_HOST: ${env:BACKEND_IMAGE_HOST}
+      BACKEND_IMAGE_PATH_PREFIX: ${env:BACKEND_IMAGE_PATH_PREFIX}
   imageEventHander:
     handler: index.imageEventHander
     name: devlog-imageEventHander
@@ -39,7 +41,7 @@ functions:
           bucket: ${env:AWS_S3_BUCKET}
           event: s3:ObjectCreated:*
           rules:
-            - prefix: ${env:S3_BUCKET_KEY_PREFIX_IMAGE}
+            - prefix: ${env:S3_BUCKET_KEY_PREFIX}
     environment:
       AWS_LAMBDA_REGION: ${env:AWS_LAMBDA_REGION}
       IMAGE_HANDLER_NAME: ${env:IMAGE_HANDLER_NAME}
@@ -50,7 +52,9 @@ functions:
     memorySize: 2048
     timeout: 10
     environment:
-      CALLBACK_DOMAIN: ${env:CALLBACK_DOMAIN}
+      BACKEND_IMAGE_HOST: ${env:BACKEND_IMAGE_HOST}
+      BACKEND_IMAGE_PATH_PREFIX: ${env:BACKEND_IMAGE_PATH_PREFIX}
+      CDN_IMAGE_URL_PREFIX: ${env:CDN_IMAGE_URL_PREFIX}
 
 plugins:
   - serverless-domain-manager
