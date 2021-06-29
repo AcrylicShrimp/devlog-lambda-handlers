@@ -31,9 +31,9 @@ functions:
       S3_BUCKET_KEY_PREFIX: ${env:S3_BUCKET_KEY_PREFIX}
       BACKEND_IMAGE_HOST: ${env:BACKEND_IMAGE_HOST}
       BACKEND_IMAGE_PATH_PREFIX: ${env:BACKEND_IMAGE_PATH_PREFIX}
-  imageEventHander:
-    handler: index.imageEventHander
-    name: devlog-imageEventHander
+  imageEventHandler:
+    handler: index.imageEventHandler
+    name: devlog-imageEventHandler
     description: Image event handler
     memorySize: 1024
     timeout: 20
@@ -47,7 +47,7 @@ functions:
     environment:
       AWS_LAMBDA_REGION: ${env:AWS_LAMBDA_REGION}
       IMAGE_HANDLER_NAME: ${env:IMAGE_HANDLER_NAME}
-  imageHander:
+  imageHandler:
     handler: index.imageHandler
     name: devlog-imageHandler
     description: Image handler
