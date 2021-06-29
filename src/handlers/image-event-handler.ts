@@ -7,17 +7,20 @@ export const handler: S3Handler = async (event) => {
   });
   const encoder = new TextEncoder();
 
-  for (const record of event.Records)
-    client.send(
-      new InvokeCommand({
-        FunctionName: process.env.IMAGE_HANDLER_NAME,
-        Payload: encoder.encode(
-          JSON.stringify({
-            region: record.awsRegion,
-            bucket: record.s3.bucket.name,
-            key: record.s3.object.key,
-          }),
-        ),
-      }),
-    );
+  await Promise.all(
+    event.Records.map((record) =>
+      client.send(
+        new InvokeCommand({
+          FunctionName: process.env.IMAGE_HANDLER_NAME,
+          Payload: encoder.encode(
+            JSON.stringify({
+              region: record.awsRegion,
+              bucket: record.s3.bucket.name,
+              key: record.s3.object.key,
+            }),
+          ),
+        }),
+      ),
+    ),
+  );
 };
