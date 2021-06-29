@@ -11,6 +11,8 @@ provider:
   versionFunctions: false
   apiGateway:
     disableDefaultEndpoint: true
+  iam:
+    role: ${env:AWS_ROLE_ARN}
 
 functions:
   imageDestinationGenerator:
