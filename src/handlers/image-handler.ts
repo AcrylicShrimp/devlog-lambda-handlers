@@ -127,8 +127,8 @@ export const handler: Handler<ImageHandlerPayload> = async (event) => {
       title,
       url: `${process.env.CDN_IMAGE_URL_PREFIX!}/${event.key}`,
     });
-  } catch {
+  } catch (err) {
     await sendResult(postUUID, imageUUID, { validity: 'invalid' });
-    return;
+    throw err;
   }
 };
