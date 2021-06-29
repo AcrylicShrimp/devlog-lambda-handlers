@@ -53,6 +53,8 @@ export const handler: Handler<ImageHandlerPayload> = async (event) => {
     }),
   );
 
+  if (!result.ContentType?.startsWith('image/')) return;
+
   const postUUID = result.Metadata?.['post-uuid']?.trim();
   const imageUUID = result.Metadata?.['image-uuid']?.trim();
   const title = result.Metadata?.['title']?.trim();
