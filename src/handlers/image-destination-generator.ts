@@ -68,6 +68,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         {
           'x-amz-meta-title': title,
         },
+        ['starts-with', '$Content-Type', 'image/'],
       ],
       Fields: {
         'x-amz-meta-post-uuid': postUUID,
