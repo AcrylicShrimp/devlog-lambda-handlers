@@ -8,10 +8,17 @@ export const handler: S3Handler = async (event) => {
   const encoder = new TextEncoder();
 
   await Promise.all(
-    event.Records.map((record) =>
-      client.send(
+    event.Records.map(async (record) => {
+      const key = record.s3.object.key;
+      let functionName;
+
+      if (key.includes('/images/')) functionName = process.env.IMAGE_HANDLER_NAME!;
+      else if (key.endsWith('/thumbnail')) functionName = process.env.THUMBNAIL_HANDLER_NAME!;
+      else return;
+
+      await client.send(
         new InvokeCommand({
-          FunctionName: process.env.IMAGE_HANDLER_NAME,
+          FunctionName: functionName,
           Payload: encoder.encode(
             JSON.stringify({
               region: record.awsRegion,
@@ -20,7 +27,7 @@ export const handler: S3Handler = async (event) => {
             }),
           ),
         }),
-      ),
-    ),
+      );
+    }),
   );
 };

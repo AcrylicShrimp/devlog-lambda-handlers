@@ -23,18 +23,54 @@ functions:
     timeout: 5
     events:
       - http:
-          path: images/destinations
+          path: destinations/images
           method: post
     environment:
       AWS_S3_REGION: ${env:AWS_S3_REGION}
       AWS_S3_BUCKET: ${env:AWS_S3_BUCKET}
       S3_BUCKET_KEY_PREFIX: ${env:S3_BUCKET_KEY_PREFIX}
-      BACKEND_IMAGE_HOST: ${env:BACKEND_IMAGE_HOST}
-      BACKEND_IMAGE_PATH_PREFIX: ${env:BACKEND_IMAGE_PATH_PREFIX}
-  imageEventHandler:
-    handler: index.imageEventHandler
-    name: devlog-imageEventHandler
-    description: Image event handler
+      BACKEND_HOST: ${env:BACKEND_HOST}
+      BACKEND_PATH_PREFIX: ${env:BACKEND_PATH_PREFIX}
+  imageHandler:
+    handler: index.imageHandler
+    name: devlog-imageHandler
+    description: Image handler
+    memorySize: 2048
+    timeout: 10
+    environment:
+      BACKEND_HOST: ${env:BACKEND_HOST}
+      BACKEND_PATH_PREFIX: ${env:BACKEND_PATH_PREFIX}
+      CDN_URL_PREFIX: ${env:CDN_URL_PREFIX}
+  thumbnailDestinationGenerator:
+    handler: index.thumbnailDestinationGenerator
+    name: devlog-thumbnailDestinationGenerator
+    description: Thumbnail destination generator
+    memorySize: 1024
+    timeout: 5
+    events:
+      - http:
+          path: destinations/thumbnails
+          method: post
+    environment:
+      AWS_S3_REGION: ${env:AWS_S3_REGION}
+      AWS_S3_BUCKET: ${env:AWS_S3_BUCKET}
+      S3_BUCKET_KEY_PREFIX: ${env:S3_BUCKET_KEY_PREFIX}
+      BACKEND_HOST: ${env:BACKEND_HOST}
+      BACKEND_PATH_PREFIX: ${env:BACKEND_PATH_PREFIX}
+  thumbnailHandler:
+    handler: index.thumbnailHandler
+    name: devlog-thumbnailHandler
+    description: Thumbnail handler
+    memorySize: 2048
+    timeout: 10
+    environment:
+      BACKEND_HOST: ${env:BACKEND_HOST}
+      BACKEND_PATH_PREFIX: ${env:BACKEND_PATH_PREFIX}
+      CDN_URL_PREFIX: ${env:CDN_URL_PREFIX}
+  uploadEventHandler:
+    handler: index.uploadEventHandler
+    name: devlog-uploadEventHandler
+    description: Upload event handler
     memorySize: 1024
     timeout: 20
     events:
@@ -47,16 +83,7 @@ functions:
     environment:
       AWS_LAMBDA_REGION: ${env:AWS_LAMBDA_REGION}
       IMAGE_HANDLER_NAME: ${env:IMAGE_HANDLER_NAME}
-  imageHandler:
-    handler: index.imageHandler
-    name: devlog-imageHandler
-    description: Image handler
-    memorySize: 2048
-    timeout: 10
-    environment:
-      BACKEND_IMAGE_HOST: ${env:BACKEND_IMAGE_HOST}
-      BACKEND_IMAGE_PATH_PREFIX: ${env:BACKEND_IMAGE_PATH_PREFIX}
-      CDN_IMAGE_URL_PREFIX: ${env:CDN_IMAGE_URL_PREFIX}
+      THUMBNAIL_HANDLER_NAME: ${env:THUMBNAIL_HANDLER_NAME}
 
 plugins:
   - serverless-domain-manager

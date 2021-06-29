@@ -5,7 +5,7 @@ import * as https from 'https';
 import sharp from 'sharp';
 import { Readable } from 'stream';
 
-interface ImageHandlerPayload {
+interface ThumbnailHandlerPayload {
   region: string;
   bucket: string;
   key: string;
@@ -13,13 +13,11 @@ interface ImageHandlerPayload {
 
 async function sendResult(
   postUUID: string,
-  imageUUID: string,
   body: {
     validity: 'valid' | 'invalid';
     width?: number;
     height?: number;
     hash?: string;
-    title?: string;
     url?: string;
   },
 ): Promise<void> {
@@ -27,7 +25,7 @@ async function sendResult(
   const req = https.request({
     host: process.env.BACKEND_HOST!,
     method: 'PUT',
-    path: `${process.env.BACKEND_PATH_PREFIX!}/${postUUID}/images/${imageUUID}`,
+    path: `${process.env.BACKEND_PATH_PREFIX!}/${postUUID}/thumbnails`,
     timeout: 5000,
     headers: {
       'Content-Type': 'application/json',
@@ -42,7 +40,7 @@ async function sendResult(
   });
 }
 
-export const handler: Handler<ImageHandlerPayload> = async (event) => {
+export const handler: Handler<ThumbnailHandlerPayload> = async (event) => {
   const s3 = new S3Client({
     region: event.region,
   });
@@ -56,18 +54,11 @@ export const handler: Handler<ImageHandlerPayload> = async (event) => {
   if (!result.ContentType?.startsWith('image/')) return;
 
   const postUUID = result.Metadata?.['post-uuid']?.trim();
-  const imageUUID = result.Metadata?.['image-uuid']?.trim();
-  const title = result.Metadata?.['title']?.trim();
 
-  if (typeof postUUID !== 'string' || !postUUID || typeof imageUUID !== 'string' || !imageUUID) return;
+  if (typeof postUUID !== 'string' || !postUUID) return;
 
   try {
-    if (typeof title !== 'string' || !title) {
-      await sendResult(postUUID, imageUUID, { validity: 'invalid' });
-      return;
-    }
-
-    const image = sharp(
+    const thumbnail = sharp(
       await new Promise<Buffer>((resolve, reject) => {
         try {
           if (!result.Body) throw new Error();
@@ -82,10 +73,10 @@ export const handler: Handler<ImageHandlerPayload> = async (event) => {
         }
       }),
     );
-    const { width, height } = await image.metadata();
+    const { width, height } = await thumbnail.metadata();
 
     if (!width || !height) {
-      await sendResult(postUUID, imageUUID, { validity: 'invalid' });
+      await sendResult(postUUID, { validity: 'invalid' });
       return;
     }
 
@@ -107,7 +98,7 @@ export const handler: Handler<ImageHandlerPayload> = async (event) => {
 
     const hash = encode(
       Uint8ClampedArray.from(
-        await image
+        await thumbnail
           .resize(maxDim === width ? { width: 100 } : { height: 100 })
           .ensureAlpha()
           .toFormat('raw')
@@ -119,16 +110,15 @@ export const handler: Handler<ImageHandlerPayload> = async (event) => {
       componentY,
     );
 
-    await sendResult(postUUID, imageUUID, {
+    await sendResult(postUUID, {
       validity: 'valid',
       width,
       height,
       hash,
-      title,
       url: `${process.env.CDN_URL_PREFIX!}/${event.key}`,
     });
   } catch (err) {
-    await sendResult(postUUID, imageUUID, { validity: 'invalid' });
+    await sendResult(postUUID, { validity: 'invalid' });
     throw err;
   }
 };
