@@ -12,7 +12,7 @@ if (pkg.dependencies) for (const dep in pkg.dependencies) deps.push(`${dep}@${pk
 fs.mkdirSync(path.join(intPath), { recursive: true });
 fs.renameSync(path.join('dist', 'index.js'), path.join(intPath, 'index.js'));
 if (deps.length)
-  spawnSync('npm.cmd', ['install', '--prefix', path.join(process.cwd(), intPath), ...deps], {
+  spawnSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['install', '--prefix', path.join(process.cwd(), intPath), ...deps], {
     cwd: path.join(process.cwd(), intPath),
     env: {
       ...process.env,
@@ -38,7 +38,7 @@ if (process.platform === 'win32')
     },
   );
 else
-  spawnSync('zip', ['-r', 'artifacts.zip', 'index.js', ...(deps.length ? ['node_modules'] : [])], {
+  spawnSync('zip', ['-vr', 'artifacts.zip', 'index.js', ...(deps.length ? ['node_modules/'] : []), '-x "*.DS_Store"'], {
     cwd: path.join(process.cwd(), intPath),
   });
 fs.renameSync(path.join(intPath, 'artifacts.zip'), path.join('dist', 'artifacts.zip'));
