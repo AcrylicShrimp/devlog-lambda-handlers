@@ -61,7 +61,11 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       Conditions: [
         {
           'x-amz-meta-post-uuid': postUUID,
+        },
+        {
           'x-amz-meta-image-uuid': imageUUID,
+        },
+        {
           'x-amz-meta-title': title,
         },
       ],
