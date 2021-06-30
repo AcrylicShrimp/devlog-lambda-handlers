@@ -35,9 +35,14 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       'Accept-Charset': 'utf-8',
     },
   });
-  await new Promise<string>((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     req.on('error', reject);
-    req.end(resolve);
+    req.on('response', (res) => {
+      if (res.statusCode !== 201) return reject(`the server returned: ${res.statusCode} ${res.statusMessage}`);
+
+      res.on('end', resolve);
+    });
+    req.end();
   });
 
   const s3 = new S3Client({
