@@ -22,9 +22,8 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   }
 
   const postUUID = body['post-uuid']?.trim();
-  const title = body.title?.trim();
 
-  if (typeof postUUID !== 'string' || !postUUID || typeof title !== 'string' || !title) return badRequestRes;
+  if (typeof postUUID !== 'string' || !postUUID) return badRequestRes;
 
   const req = https.request({
     host: process.env.BACKEND_HOST!,
