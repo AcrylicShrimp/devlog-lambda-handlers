@@ -25,7 +25,7 @@ async function sendResult(
   const req = https.request({
     host: process.env.BACKEND_HOST!,
     method: 'PUT',
-    path: `${process.env.BACKEND_PATH_PREFIX!}/${postUUID}/thumbnails`,
+    path: `${process.env.BACKEND_PATH_PREFIX!}/${postUUID}/thumbnail`,
     timeout: 5000,
     headers: {
       'Content-Type': 'application/json',
